@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // playwright
+    implementation 'com.microsoft.playwright:playwright:1.32.0'
+}
+
+
+def poolSizes = [1, 2, 4, 6, 8, 12, 16]
+
+for (poolSize in poolSizes) {
+    final int sz = poolSize
+    tasks.register("test_Playwright_${sz}threads", JavaExec) {
+        group = "playwright"
+        mainClass.set("PlaywrightApp")
+        classpath(sourceSets.main.runtimeClasspath)
+        jvmArgs("-DTOTAL_PDFS=48", "-DPOOL_SIZE=${sz}", "-Xmx4g", "-Xms4g")
+        doLast {
+            println "Finished ${mainClass.get()}"
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
