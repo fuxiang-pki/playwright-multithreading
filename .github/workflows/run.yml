@@ -1,0 +1,51 @@
+name: Benchmarking
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  playwright:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Gradle Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle
+          key: ${{runner.os}}-build-gradle-${{hashFiles('**/gradle-wrapper.properties')}}
+
+      - name: Benchmarking on Java 17
+        run: |
+          chmod +x gradlew
+
+      - name: test_Playwright_1threads
+        run: ./gradlew test_Playwright_1threads
+
+      - name: test_Playwright_2threads
+        run: ./gradlew test_Playwright_2threads
+
+      - name: test_Playwright_4threads
+        run: ./gradlew test_Playwright_4threads
+
+      - name: test_Playwright_6threads
+        run: ./gradlew test_Playwright_6threads
+
+      - name: test_Playwright_8threads
+        run: ./gradlew test_Playwright_8threads
+
+      - name: test_Playwright_12threads
+        run: ./gradlew test_Playwright_12threads
+
+      - name: test_Playwright_16threads
+        run: ./gradlew test_Playwright_16threads
